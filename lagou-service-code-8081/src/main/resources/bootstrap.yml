@@ -1,0 +1,68 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: lagou-service-code
+#  datasource:
+#    driver-class-name: com.mysql.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/lagou?useUnicode=true&characterEncoding=utf8
+#    username: root
+#    password: root123456
+  jpa:
+    database: MySQL
+    show-sql: true
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl  #避免将驼峰命名转换为下划线命名
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: dev
+      config:
+        server-addr: 127.0.0.1:8848
+        namespace: dev
+        group: DEFAULT_GROUP
+        file-extension: yaml
+    sentinel:
+      transport:
+        dashboard: 127.0.0.1:9999
+        port: 8819
+  main:
+    allow-bean-definition-overriding: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  # 暴露健康接口的细节
+  endpoint:
+    health:
+      show-details: always
+
+#lagou-service-mail:
+#  ribbon:
+#    #请求连接超时时间
+#    ConnectTimeout: 10000
+#    #请求处理超时时间
+#    ##########################################Feign超时时长设置
+#    ReadTimeout: 1000000
+#    #对所有操作都进行重试
+#    OkToRetryOnAllOperations: true
+#    ####根据如上配置，当访问到故障请求的时候，它会再尝试访问一次当前实例（次数由MaxAutoRetries配置），
+#    ####如果不行，就换一个实例进行访问，如果还不行，再换一次实例访问（更换次数由MaxAutoRetriesNextServer配置），
+#    ####如果依然不行，返回失败信息。
+#    MaxAutoRetries: 0 #对当前选中实例重试次数，不包括第一次调用
+#    MaxAutoRetriesNextServer: 0 #切换实例的重试次数
+#    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule #负载策略调整
+
+
+dubbo:
+  registry:
+    # 挂载到 Spring Cloud 注册中心
+    address: spring-cloud://localhost
+  cloud:
+    # 订阅服务提供方的应用列表，订阅多个服务提供者使用 "," 连接
+    subscribed-services: lagou-service-mail
+  consumer:
+    timeout: 100000

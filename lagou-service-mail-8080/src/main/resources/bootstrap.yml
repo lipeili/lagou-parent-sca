@@ -1,0 +1,70 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: lagou-service-mail
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/lagou?useUnicode=true&characterEncoding=utf8
+    username: root
+    password: root123456
+  jpa:
+    database: MySQL
+    show-sql: true
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl  #避免将驼峰命名转换为下划线命名
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: dev
+    sentinel:
+      transport:
+        dashboard: 127.0.0.1:9999
+        port: 8719
+
+  mail:
+    host: smtp.qq.com # qq邮箱的固定写法（每一家邮件服务商有自己的固定地址）
+    username: 824007103@qq.com # 邮箱账号
+    password: nsavbqlxsmcebfbh # 授权码
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*" # 暴露健康接口的细节
+  endpoint:
+    health:
+      show-details: always
+
+# 配置常量
+mail:
+  fromMail:
+    addr: 824007103@qq.com #发送人
+  receptionMail:
+    addr: lipeili@videopls.com  # 接收人
+
+dubbo:
+  scan:
+    # dubbo 服务扫描基准包
+    base-packages: com.lagou.edu.service.impl
+  protocol:
+    # dubbo 协议
+    name: dubbo
+  # dubbo 协议端口( -1 表示自增端口，从 20880 开始)
+    port: -1
+  registry:
+    # 挂载到 Spring Cloud 的注册中心
+    address: spring-cloud://localhost
+
+

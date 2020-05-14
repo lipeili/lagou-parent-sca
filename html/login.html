@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+</head>
+<body>
+    <form  method="post" action="http://127.0.0.1:9002/user/login">
+        邮 箱 <input name="email" id="email" type="text"/><br>
+        密 码 <input name="password" id="password" type="text"/><br>
+        <button type="button" onclick="paramsCheck()">登陆</button>  
+          
+    </form>
+    <a href="register.html">注册新账号</a>
+
+</body>
+<script>
+
+
+    function paramsCheck () {
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("password").value;
+
+        if (email == '' || password == '' ) {
+            alert("参数不足");
+            return false;
+        }
+
+        ajax({
+            type:"post",
+            url:"http://127.0.0.1:9002/user/login" ,
+            data:{'email':email,'password':password},
+            success:function(data){
+                // console.log(data);
+                // if (data == 'success') {
+                    window.location.href = "welcome.html";
+                // } else {
+                //     alert("登陆失败");
+                // }
+                ajax({
+                    type:"get",
+                    url:"http://127.0.0.1:9002/user/login" ,
+                    data:{'email':email,'password':password},
+                    success:function(data){
+                        // console.log(data);
+                        // if (data == 'success') {
+                        window.location.href = "welcome.html";
+                        // } else {
+                        //     alert("登陆失败");
+                        // }
+                    }
+                })
+            }
+        })
+    }
+
+    function ajax(options){
+        //创建一个ajax对象
+        var xhr = new XMLHttpRequest() || new ActiveXObject("Microsoft,XMLHTTP");
+        //数据的处理 {a:1,b:2} a=1&b=2;
+        var str = "";
+        for(var key in options.data){
+            str+="&"+key+"="+options.data[key];
+        }
+        str = str.slice(1)
+        if(options.type == "get"){
+            var url = options.url+"?"+str;
+            xhr.open("get",url);
+            xhr.send();
+        }else if(options.type == "post"){
+            xhr.open("post",options.url);
+            xhr.setRequestHeader("content-type","application/x-www-form-urlencoded");
+            xhr.send(str)
+        }
+        //监听
+        xhr.onreadystatechange = function(){
+            //当请求成功的时候
+            if(xhr.readyState == 4 && xhr.status == 200){
+                var d = xhr.responseText;
+                //将请求的数据传递给成功回调函数
+                options.success&&options.success(d)
+            }else if(xhr.status != 200){
+                //当失败的时候将服务器的状态传递给失败的回调函数
+                options.error&&options.error(xhr.status);
+            }
+        }
+    }
+
+
+</script>
+</html>
